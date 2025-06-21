@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Mode - Fashion Design Studio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 3rem;
+            color: #ff4e8d;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff4e8d, #ff9a5a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-family: 'Raleway', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: #d0d0ff;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .design-area {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(30, 25, 70, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .tools-panel {
+            background: rgba(30, 25, 70, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            width: 320px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            color: #ff9a5a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 154, 90, 0.3);
+        }
+        
+        #canvas-container {
+            flex: 1;
+            border: 2px dashed rgba(255, 154, 90, 0.4);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(10, 8, 30, 0.5);
+            position: relative;
+        }
+        
+        canvas {
+            cursor: crosshair;
+            background: rgba(15, 12, 41, 0.8);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        .tool-group {
+            margin-bottom: 25px;
+        }
+        
+        .tool-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .tool-btn {
+            background: rgba(40, 35, 90, 0.5);
+            border: 2px solid rgba(255, 154, 90, 0.3);
+            border-radius: 10px;
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #d0d0ff;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .tool-btn:hover {
+            background: rgba(255, 154, 90, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .tool-btn.active {
+            background: linear-gradient(135deg, #ff4e8d, #ff9a5a);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 5px 15px rgba(255, 78, 141, 0.4);
+        }
+        
+        .tool-btn i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            background: rgba(20, 15, 50, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .color-option {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        }
+        
+        .color-option:hover {
+            transform: scale(1.15);
+        }
+        
+        .color-option.active {
+            transform: scale(1.2);
+            border-color: white;
+            box-shadow: 0 0 0 3px #ff9a5a;
+        }
+        
+        .slider-container {
+            margin-top: 10px;
+            background: rgba(20, 15, 50, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #d0d0ff;
+        }
+        
+        #brush-size {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 154, 90, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        #brush-size::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #ff9a5a;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 154, 90, 0.8);
+        }
+        
+        .ai-suggestions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .ai-suggestion {
+            background: rgba(40, 35, 90, 0.5);
+            border-radius: 10px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 154, 90, 0.3);
+        }
+        
+        .ai-suggestion:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-color: #ff4e8d;
+            background: rgba(255, 78, 141, 0.2);
+        }
+        
+        .ai-suggestion i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+            color: #ff9a5a;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .action-btn i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ff4e8d, #ff9a5a);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 78, 141, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(40, 35, 90, 0.7);
+            color: #d0d0ff;
+            border: 2px solid rgba(255, 154, 90, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ff9a5a, #ff4e8d);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 78, 141, 0.6);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 154, 90, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .design-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .size-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .size-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(40, 35, 90, 0.5);
+            border: 2px solid rgba(255, 154, 90, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+            color: #d0d0ff;
+            transition: all 0.3s;
+        }
+        
+        .size-btn:hover {
+            background: rgba(255, 154, 90, 0.2);
+        }
+        
+        .size-btn.active {
+            background: linear-gradient(135deg, #ff4e8d, #ff9a5a);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 5px 15px rgba(255, 78, 141, 0.4);
+        }
+        
+        .layers-panel {
+            background: rgba(30, 25, 70, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            width: 270px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .layer-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            background: rgba(20, 15, 50, 0.5);
+            border-radius: 10px;
+            padding: 10px;
+        }
+        
+        .layer-item {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+            color: #d0d0ff;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .layer-item:hover {
+            background: rgba(255, 154, 90, 0.1);
+        }
+        
+        .layer-item.active {
+            background: rgba(255, 78, 141, 0.2);
+            font-weight: 500;
+            color: white;
+        }
+        
+        .layer-item i {
+            margin-right: 10px;
+            color: #ff9a5a;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #a0a0d0;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 1100px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .tools-panel, .layers-panel {
+                width: 100%;
+            }
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 12, 41, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 154, 90, 0.3);
+            border-radius: 50%;
+            border-top-color: #ff4e8d;
+            animation: spin 1.2s ease-in-out infinite;
+            margin-bottom: 25px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 1.5rem;
+            color: #ff9a5a;
+            font-weight: 500;
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.7s forwards;
+        }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff4e8d, #ff9a5a);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(255, 78, 141, 0.5);
+            transform: translateX(120%);
+            transition: transform 0.4s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification i {
+            margin-right: 12px;
+            font-size: 1.4rem;
+        }
+        
+        .website-link {
+            display: block;
+            margin: 25px auto;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #ff9a5a;
+            text-decoration: none;
+            font-weight: 600;
+            background: rgba(40, 35, 90, 0.5);
+            padding: 12px 25px;
+            border-radius: 30px;
+            width: fit-content;
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 154, 90, 0.3);
+        }
+        
+        .website-link:hover {
+            background: rgba(255, 154, 90, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 78, 141, 0.4);
+            color: white;
+        }
+        
+        .pattern-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 78, 141, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 154, 90, 0.1) 0%, transparent 20%);
+            z-index: -1;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="pattern-bg"></div>
+    
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <p class="loading-text">Activating Creator Mode...</p>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> Design saved successfully!
+    </div>
+    
+    <div class="container" id="app-container" style="display: none;">
+        <header>
+            <div class="logo">
+                <i class="fas fa-palette"></i>
+                <h1>CREATOR MODE</h1>
+                <i class="fas fa-tshirt"></i>
+            </div>
+            <p class="subtitle">Unleash your creativity with our advanced AI-powered fashion design studio. Create, customize, and bring your fashion visions to life.</p>
+            
+            <a href="#" class="website-link">
+                <i class="fas fa-star"></i> Fashion Design Studio v2.0
+            </a>
+        </header>
+        
+        <div class="main-content">
+            <div class="design-area">
+                <h2 class="section-title"><i class="fas fa-paint-brush"></i> Design Canvas</h2>
+                <div id="canvas-container">
+                    <canvas id="design-canvas" width="800" height="600"></canvas>
+                </div>
+                <div class="design-actions">
+                    <div class="size-controls">
+                        <div class="size-btn active" data-size="small">Small Canvas</div>
+                        <div class="size-btn" data-size="medium">Medium Canvas</div>
+                        <div class="size-btn" data-size="large">Large Canvas</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tools-panel">
+                <h2 class="section-title"><i class="fas fa-tools"></i> Creator Tools</h2>
+                
+                <div class="tool-group">
+                    <h3><i class="fas fa-pencil-alt"></i> Drawing Tools</h3>
+                    <div class="tool-row">
+                        <div class="tool-btn active" id="tool-pencil">
+                            <i class="fas fa-pencil-alt"></i> Pencil
+                        </div>
+                        <div class="tool-btn" id="tool-brush">
+                            <i class="fas fa-paint-brush"></i> Brush
+                        </div>
+                        <div class="tool-btn" id="tool-eraser">
+                            <i class="fas fa-eraser"></i> Eraser
+                        </div>
+                    </div>
+                    
+                    <div class="tool-row">
+                        <div class="tool-btn" id="tool-rect">
+                            <i class="far fa-square"></i> Rectangle
+                        </div>
+                        <div class="tool-btn" id="tool-circle">
+                            <i class="far fa-circle"></i> Circle
+                        </div>
+                        <div class="tool-btn" id="tool-line">
+                            <i class="fas fa-slash"></i> Line
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tool-group">
+                    <h3><i class="fas fa-fill-drip"></i> Colors</h3>
+                    <div class="color-picker">
+                        <div class="color-option active" style="background-color: #ff4e8d;" data-color="#ff4e8d"></div>
+                        <div class="color-option" style="background-color: #ff9a5a;" data-color="#ff9a5a"></div>
+                        <div class="color-option" style="background-color: #6b6bff;" data-color="#6b6bff"></div>
+                        <div class="color-option" style="background-color: #4cd964;" data-color="#4cd964"></div>
+                        <div class="color-option" style="background-color: #ff3b30;" data-color="#ff3b30"></div>
+                        <div class="color-option" style="background-color: #007aff;" data-color="#007aff"></div>
+                        <div class="color-option" style="background-color: #ff2d55;" data-color="#ff2d55"></div>
+                        <div class="color-option" style="background-color: #000000;" data-color="#000000"></div>
+                        <div class="color-option" style="background-color: #ffffff; border: 1px solid #ccc;" data-color="#ffffff"></div>
+                    </div>
+                </div>
+                
+                <div class="tool-group">
+                    <h3><i class="fas fa-ruler"></i> Brush Size</h3>
+                    <div class="slider-container">
+                        <label for="brush-size">Size: <span id="brush-size-value">5</span>px</label>
+                        <input type="range" id="brush-size" min="1" max="30" value="5">
+                    </div>
+                </div>
+                
+                <div class="tool-group">
+                    <h3><i class="fas fa-robot"></i> AI Design Assistant</h3>
+                    <p>Click to add to your design:</p>
+                    <div class="ai-suggestions">
+                        <div class="ai-suggestion" data-design="dress">
+                            <i class="fas fa-tshirt"></i>
+                            <div>Summer Dress</div>
+                        </div>
+                        <div class="ai-suggestion" data-design="shirt">
+                            <i class="fas fa-tshirt"></i>
+                            <div>Designer Shirt</div>
+                        </div>
+                        <div class="ai-suggestion" data-design="pants">
+                            <i class="fas fa-tshirt"></i>
+                            <div>Stylish Pants</div>
+                        </div>
+                        <div class="ai-suggestion" data-design="jacket">
+                            <i class="fas fa-tshirt"></i>
+                            <div>Modern Jacket</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn btn-primary" id="save-design">
+                        <i class="fas fa-save"></i> Save Design
+                    </button>
+                    <button class="action-btn btn-secondary" id="clear-canvas">
+                        <i class="fas fa-trash-alt"></i> Clear Canvas
+                    </button>
+                </div>
+            </div>
+            
+            <div class="layers-panel">
+                <h2 class="section-title"><i class="fas fa-layer-group"></i> Design Layers</h2>
+                <div class="layer-list" id="layer-list">
+                    <div class="layer-item active">
+                        <i class="fas fa-layer-group"></i> Base Layer
+                    </div>
+                    <div class="layer-item">
+                        <i class="fas fa-draw-polygon"></i> Outline
+                    </div>
+                    <div class="layer-item">
+                        <i class="fas fa-border-style"></i> Pattern
+                    </div>
+                    <div class="layer-item">
+                        <i class="fas fa-cut"></i> Details
+                    </div>
+                    <div class="layer-item">
+                        <i class="fas fa-vest"></i> Accessories
+                    </div>
+                </div>
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <button class="action-btn btn-secondary" style="flex: none; width: 100%;" id="add-layer">
+                        <i class="fas fa-plus"></i> Add New Layer
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Creator Mode - Fashion Design Studio &copy; 2023 | Transform your ideas into digital fashion masterpieces</p>
+            <p>Powered by AI Technology | v2.0</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loading overlay initially
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const appContainer = document.getElementById('app-container');
+            const notification = document.getElementById('notification');
+            
+            // Simulate loading time
+            setTimeout(function() {
+                loadingOverlay.classList.add('fade-out');
+                setTimeout(function() {
+                    loadingOverlay.style.display = 'none';
+                    appContainer.style.display = 'block';
+                    
+                    // Initialize the app after loading
+                    initFashionDesigner();
+                }, 500);
+            }, 2000);
+            
+            function showNotification() {
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+            
+            function initFashionDesigner() {
+                // Initialize Fabric.js canvas
+                const canvas = new fabric.Canvas('design-canvas', {
+                    isDrawingMode: true,
+                    backgroundColor: 'rgba(15, 12, 41, 0.8)'
+                });
+                
+                // Set initial brush
+                canvas.freeDrawingBrush.color = '#ff4e8d';
+                canvas.freeDrawingBrush.width = 5;
+                
+                // Tool selection
+                const tools = {
+                    'tool-pencil': 'pencil',
+                    'tool-brush': 'brush',
+                    'tool-eraser': 'eraser',
+                    'tool-rect': 'rect',
+                    'tool-circle': 'circle',
+                    'tool-line': 'line'
+                };
+                
+                let currentTool = 'pencil';
+                let isDrawing = false;
+                let currentShape = null;
+                let startX, startY;
+                
+                // Set up tool buttons
+                Object.keys(tools).forEach(toolId => {
+                    document.getElementById(toolId).addEventListener('click', function() {
+                        // Remove active class from all tools
+                        document.querySelectorAll('.tool-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        
+                        // Add active class to current tool
+                        this.classList.add('active');
+                        
+                        // Set current tool
+                        currentTool = tools[toolId];
+                        
+                        // Update canvas drawing mode
+                        if (currentTool === 'pencil' || currentTool === 'brush' || currentTool === 'eraser') {
+                            canvas.isDrawingMode = true;
+                            
+                            if (currentTool === 'pencil') {
+                                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+                                canvas.freeDrawingBrush.width = parseInt(document.getElementById('brush-size').value);
+                            } else if (currentTool === 'brush') {
+                                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+                                canvas.freeDrawingBrush.width = parseInt(document.getElementById('brush-size').value) * 2;
+                            } else if (currentTool === 'eraser') {
+                                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+                                canvas.freeDrawingBrush.color = 'rgba(15, 12, 41, 0.8)';
+                                canvas.freeDrawingBrush.width = parseInt(document.getElementById('brush-size').value) * 3;
+                            }
+                            
+                            canvas.freeDrawingBrush.color = document.querySelector('.color-option.active').getAttribute('data-color');
+                        } else {
+                            canvas.isDrawingMode = false;
+                        }
+                    });
+                });
+                
+                // Set up color picker
+                document.querySelectorAll('.color-option').forEach(color => {
+                    color.addEventListener('click', function() {
+                        document.querySelectorAll('.color-option').forEach(c => {
+                            c.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                        
+                        if (currentTool !== 'eraser') {
+                            canvas.freeDrawingBrush.color = this.getAttribute('data-color');
+                        }
+                    });
+                });
+                
+                // Brush size slider
+                const brushSizeSlider = document.getElementById('brush-size');
+                const brushSizeValue = document.getElementById('brush-size-value');
+                
+                brushSizeSlider.addEventListener('input', function() {
+                    brushSizeValue.textContent = this.value;
+                    
+                    if (currentTool === 'pencil') {
+                        canvas.freeDrawingBrush.width = parseInt(this.value);
+                    } else if (currentTool === 'brush') {
+                        canvas.freeDrawingBrush.width = parseInt(this.value) * 2;
+                    } else if (currentTool === 'eraser') {
+                        canvas.freeDrawingBrush.width = parseInt(this.value) * 3;
+                    }
+                });
+                
+                // Shape creation
+                canvas.on('mouse:down', function(options) {
+                    if (currentTool === 'rect' || currentTool === 'circle' || currentTool === 'line') {
+                        isDrawing = true;
+                        const pointer = canvas.getPointer(options.e);
+                        startX = pointer.x;
+                        startY = pointer.y;
+                        
+                        let fillColor = document.querySelector('.color-option.active').getAttribute('data-color');
+                        
+                        switch(currentTool) {
+                            case 'rect':
+                                currentShape = new fabric.Rect({
+                                    left: startX,
+                                    top: startY,
+                                    width: 0,
+                                    height: 0,
+                                    fill: fillColor + '80', // Add transparency
+                                    stroke: fillColor,
+                                    strokeWidth: 2
+                                });
+                                break;
+                            case 'circle':
+                                currentShape = new fabric.Circle({
+                                    left: startX,
+                                    top: startY,
+                                    radius: 0,
+                                    fill: fillColor + '80',
+                                    stroke: fillColor,
+                                    strokeWidth: 2
+                                });
+                                break;
+                            case 'line':
+                                currentShape = new fabric.Line([startX, startY, startX, startY], {
+                                    stroke: fillColor,
+                                    strokeWidth: parseInt(document.getElementById('brush-size').value)
+                                });
+                                break;
+                        }
+                        
+                        canvas.add(currentShape);
+                    }
+                });
+                
+                canvas.on('mouse:move', function(options) {
+                    if (isDrawing) {
+                        const pointer = canvas.getPointer(options.e);
+                        
+                        switch(currentTool) {
+                            case 'rect':
+                                if (startX > pointer.x) {
+                                    currentShape.set({ left: pointer.x });
+                                }
+                                if (startY > pointer.y) {
+                                    currentShape.set({ top: pointer.y });
+                                }
+                                
+                                currentShape.set({
+                                    width: Math.abs(startX - pointer.x),
+                                    height: Math.abs(startY - pointer.y)
+                                });
+                                break;
+                            case 'circle':
+                                const radius = Math.sqrt(Math.pow(startX - pointer.x, 2) + Math.pow(startY - pointer.y, 2)) / 2;
+                                currentShape.set({ radius: radius });
+                                
+                                if (startX > pointer.x) {
+                                    currentShape.set({ left: pointer.x });
+                                }
+                                if (startY > pointer.y) {
+                                    currentShape.set({ top: pointer.y });
+                                }
+                                break;
+                            case 'line':
+                                currentShape.set({ x2: pointer.x, y2: pointer.y });
+                                break;
+                        }
+                        
+                        canvas.renderAll();
+                    }
+                });
+                
+                canvas.on('mouse:up', function() {
+                    isDrawing = false;
+                });
+                
+                // AI Suggestions
+                document.querySelectorAll('.ai-suggestion').forEach(suggestion => {
+                    suggestion.addEventListener('click', function() {
+                        const designType = this.getAttribute('data-design');
+                        
+                        // Add different designs based on selection
+                        let design;
+                        const color = document.querySelector('.color-option.active').getAttribute('data-color');
+                        
+                        switch(designType) {
+                            case 'dress':
+                                design = new fabric.Path('M 200 100 Q 260 150 200 300 Q 140 150 200 100 Z', {
+                                    fill: color + '40',
+                                    stroke: color,
+                                    strokeWidth: 2
+                                });
+                                break;
+                            case 'shirt':
+                                design = new fabric.Path('M 150 150 L 250 150 L 250 250 L 200 300 L 150 250 Z', {
+                                    fill: color + '40',
+                                    stroke: color,
+                                    strokeWidth: 2
+                                });
+                                break;
+                            case 'pants':
+                                design = new fabric.Path('M 180 150 L 220 150 L 240 300 L 200 330 L 160 300 Z', {
+                                    fill: color + '40',
+                                    stroke: color,
+                                    strokeWidth: 2
+                                });
+                                break;
+                            case 'jacket':
+                                design = new fabric.Path('M 140 140 L 260 140 L 260 200 L 240 280 L 220 300 L 180 300 L 160 280 L 140 200 Z', {
+                                    fill: color + '40',
+                                    stroke: color,
+                                    strokeWidth: 2
+                                });
+                                break;
+                        }
+                        
+                        canvas.add(design);
+                        canvas.renderAll();
+                    });
+                });
+                
+                // Canvas size controls
+                document.querySelectorAll('.size-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.size-btn').forEach(b => {
+                            b.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                        
+                        const size = this.getAttribute('data-size');
+                        let width, height;
+                        
+                        switch(size) {
+                            case 'small':
+                                width = 600;
+                                height = 450;
+                                break;
+                            case 'medium':
+                                width = 800;
+                                height = 600;
+                                break;
+                            case 'large':
+                                width = 1000;
+                                height = 750;
+                                break;
+                        }
+                        
+                        canvas.setDimensions({width: width, height: height});
+                    });
+                });
+                
+                // Clear canvas
+                document.getElementById('clear-canvas').addEventListener('click', function() {
+                    if (confirm('Are you sure you want to clear the canvas?')) {
+                        canvas.clear();
+                        canvas.backgroundColor = 'rgba(15, 12, 41, 0.8)';
+                        canvas.renderAll();
+                    }
+                });
+                
+                // Save design
+                document.getElementById('save-design').addEventListener('click', function() {
+                    const dataURL = canvas.toDataURL({
+                        format: 'png',
+                        quality: 0.9
+                    });
+                    
+                    const link = document.createElement('a');
+                    link.href = dataURL;
+                    link.download = 'creator-mode-design.png';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Show notification
+                    showNotification();
+                });
+                
+                // Add layer
+                document.getElementById('add-layer').addEventListener('click', function() {
+                    const layerName = prompt('Enter layer name:');
+                    if (layerName) {
+                        const layerList = document.getElementById('layer-list');
+                        const newLayer = document.createElement('div');
+                        newLayer.className = 'layer-item';
+                        newLayer.innerHTML = `<i class="fas fa-layer-group"></i> ${layerName}`;
+                        layerList.appendChild(newLayer);
+                        
+                        // Make new layer active
+                        document.querySelectorAll('.layer-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        newLayer.classList.add('active');
+                    }
+                });
+                
+                // Layer selection
+                document.getElementById('layer-list').addEventListener('click', function(e) {
+                    if (e.target.classList.contains('layer-item')) {
+                        document.querySelectorAll('.layer-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        e.target.classList.add('active');
+                    }
+                });
+                
+                // Initial setup
+                document.getElementById('tool-pencil').classList.add('active');
+                
+                // Add sample design elements
+                const dress = new fabric.Path('M 200 100 Q 260 150 200 300 Q 140 150 200 100 Z', {
+                    fill: 'rgba(255, 78, 141, 0.2)',
+                    stroke: '#ff4e8d',
+                    strokeWidth: 2
+                });
+                
+                const neckline = new fabric.Circle({
+                    left: 200,
+                    top: 120,
+                    radius: 30,
+                    fill: '',
+                    stroke: '#ff9a5a',
+                    strokeWidth: 2
+                });
+                
+                canvas.add(dress);
+                canvas.add(neckline);
+            }
+        });
+    </script>
+</body>
+</html>
